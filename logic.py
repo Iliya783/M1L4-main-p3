@@ -1,5 +1,6 @@
 from random import randint
 import requests
+from datetime import datetime, timedelta
 
 class Pokemon:
     pokemons = {}
@@ -7,7 +8,7 @@ class Pokemon:
     def __init__(self, pokemon_trainer):
 
         self.pokemon_trainer = pokemon_trainer   
-
+        self.last_feed_time = datetime.now()
         self.pokemon_number = randint(1,1000)
         self.img = self.get_img()
         self.name = self.get_name()
@@ -41,7 +42,7 @@ class Pokemon:
 
     # Метод класса для получения информации
     def info(self):
-        return f"Имя твоего покеомона: {self.name} hp: {self.hp} power: {self.power}"
+        return f"Имя твоего покемона: {self.name} hp: {self.hp} power: {self.power}"
 
     # Метод класса для получения картинки покемона
     def show_img(self):
@@ -55,6 +56,17 @@ class Pokemon:
         else:
             enemy.hp = 0
             return f"Победа @{self.pokemon_trainer} над @{enemy.pokemon_trainer}! "
+        
+
+    def feed(self, feed_interval = 20, hp_increase = 10 ):
+        current_time = datetime.now()  
+        delta_time = timedelta(seconds=feed_interval)  
+        if (current_time - self.last_feed_time) > delta_time:
+            self.hp += hp_increase
+            self.last_feed_time = current_time
+            return f"Здоровье покемона увеличено. Текущее здоровье: {self.hp}"
+        else:
+            return f"Следующее время кормления покемона: {self.last_feed_time+delta_time}"
 
 
 class Fighter(Pokemon):
@@ -75,3 +87,11 @@ class Wizard(Pokemon):
         self.hp -= randint(100, 200)
         self.power += randint(50, 100)
         self.name += " Wizard"
+
+
+    def info(self):
+        return f"""Имя твоего покеомона: {self.name}
+    Cила покемона: {self.power}
+    Здоровье покемона: {self.hp}"""
+
+
